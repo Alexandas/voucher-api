@@ -2,8 +2,8 @@ import { Sequelize, Model, DataTypes } from 'sequelize';
 export const sequelize = new Sequelize({
 	dialect: 'mysql',
 	username: process.env.DBUSER ?? 'root',
-	host: process.env.DBHOST ?? '192.168.100.111',
-	password: process.env.DBPWD ?? '123456',
+	host: process.env.DBHOST ?? '127.0.0.1',
+	password: process.env.DBPWD ?? '',
 	database: process.env.DBNAME ?? 'temp_vouchers'
 });
 

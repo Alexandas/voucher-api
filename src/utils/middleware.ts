@@ -5,6 +5,10 @@ import { logger } from './logger'
 export const httpErrorMiddleware = async (ctx: ParameterizedContext<any, {}>, next: () => Promise<any>) => {
 	try {
 		await next()
+		ctx.body = {
+			code: 200,
+			data: ctx.body
+		}
 	} catch (err) {
 		if (err instanceof HttpError) {
 			ctx.status = err.statusCode

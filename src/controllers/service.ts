@@ -44,18 +44,6 @@ export default class Service {
 		}
 	}
 
-	static async getVoucher(code: string) {
-		const vourcher = await Vouchers.findOne({
-			where: {
-				code
-			}
-		})
-		if (!vourcher) {
-			throw new HttpError(HttpStatusCode.NotFound, 'voucher not found')
-		}
-		return vourcher.dataValues
-	}
-
 	static async getVoucherBy(address: string) {
 		const vourcher = await Vouchers.findOne({
 			where: {
@@ -70,6 +58,9 @@ export default class Service {
 
 	static async checkClaimed(address: string) {
 		const voucher = await this.getVoucherBy(address)
+		if (Date.now() > voucher.expiredAt.getTime()) {
+			throw new HttpError(HttpStatusCode.Forbidden, 'voucher expired')
+		}
 		if (voucher.isClaimed) {
 			throw new HttpError(HttpStatusCode.Forbidden, 'voucher is claimed')
 		}

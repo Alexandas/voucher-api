@@ -27,7 +27,6 @@ async function start() {
 
 	const port = process.env.PORT || 3000
 
-	console.log("Server running on port " + port)
 	logger.info("Server running on port " + port)
 	app.listen(port);
 }
