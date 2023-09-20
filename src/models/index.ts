@@ -40,7 +40,7 @@ Vouchers.init(
 			defaultValue: null,
 			primaryKey: false
 		},
-		claimdAt: {
+		claimedAt: {
 			type: DataTypes.DATE,
 			defaultValue: null,
 			primaryKey: false

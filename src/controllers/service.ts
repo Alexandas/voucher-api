@@ -70,7 +70,8 @@ export default class Service {
 	static async claim(code: string) {
 		const n = await Vouchers.update(
 			{
-				isClaimed: true
+				isClaimed: true,
+				claimedAt: new Date()
 			},
 			{ where: { code } }
 		)
