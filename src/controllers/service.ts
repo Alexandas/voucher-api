@@ -1,6 +1,7 @@
 import axios from "axios";
 import { Vouchers } from "../models";
 import { HttpError, HttpStatusCode } from "../utils/httperror";
+import { Op } from "sequelize";
 
 interface UserRes {
 	code: number,
@@ -44,38 +45,48 @@ export default class Service {
 		}
 	}
 
-	static async getVoucherBy(address: string) {
-		const vourcher = await Vouchers.findOne({
+	static async getVouchers(address: string) {
+		const vourchers = await Vouchers.findAll({
 			where: {
 				address
 			}
 		})
-		if (!vourcher) {
-			throw new HttpError(HttpStatusCode.NotFound, 'voucher not found')
-		}
-		return vourcher.dataValues
+		return vourchers
 	}
 
-	static async checkClaimed(address: string) {
-		const voucher = await this.getVoucherBy(address)
-		if (Date.now() > voucher.expiredAt.getTime()) {
-			throw new HttpError(HttpStatusCode.Forbidden, 'voucher expired')
-		}
-		if (voucher.isClaimed) {
-			throw new HttpError(HttpStatusCode.Forbidden, 'voucher is claimed')
-		}
-		return voucher;
+	static async getValidVouchers(address: string) {
+		const vourchers = await Vouchers.findAll({
+			where: {
+				[Op.and]: {
+					address,
+					expiredAt: {
+						[Op.gt]: Date.now()
+					},
+					claimedAt: {
+						[Op.is]: null
+					}
+				},
+			}
+		})
+		return vourchers
 	}
 
-	static async claim(code: string) {
-		const n = await Vouchers.update(
+	static async getClaimable(address: string) {
+		const vouchers = await this.getValidVouchers(address)
+		return vouchers;
+	}
+
+	static async claim(code: string, address: string, activity: number) {
+		await Vouchers.update(
 			{
-				isClaimed: true,
 				claimedAt: new Date()
 			},
-			{ where: { code } }
+			{
+				where: {
+					[Op.and]: { code, address, activity }
+				}
+			}
 		)
-		return n[0] == 0;
 	}
 
 }

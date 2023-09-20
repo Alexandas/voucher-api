@@ -3,23 +3,20 @@ import service from './service'
 
 const router = new Router();
 
-router.get("/voucher/status", async (ctx: any) => {
+router.get("/vouchers", async (ctx: any) => {
 	const token = ctx.request.token
 	const address = await service.getAddress(token)
-	const voucher = await service.checkClaimed(address)
-	ctx.body = {
-		amount: voucher.amount,
-		expiredAt: voucher.expiredAt,
-		code: voucher.code
-	}
+	const vouchers = await service.getClaimable(address)
+	ctx.body = vouchers
 });
 
-router.post("/voucher/claim", async (ctx: any) => {
+router.post("/vouchers/claim", async (ctx: any) => {
 	const token = ctx.request.token
+	const code = ctx.request.body.code
+	const activity = ctx.request.body.activity
 	const address = await service.getAddress(token)
-	const voucher = await service.checkClaimed(address)
-	await service.claim(voucher.code)
-	ctx.body = { code: voucher.code }
+	await service.claim(code, address, activity)
+	ctx.body = { code }
 });
 
 export default router;

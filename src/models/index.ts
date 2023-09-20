@@ -45,8 +45,8 @@ Vouchers.init(
 			defaultValue: null,
 			primaryKey: false
 		},
-		isClaimed: {
-			type: DataTypes.BOOLEAN,
+		activity: {
+			type: DataTypes.BIGINT,
 			defaultValue: 0,
 			primaryKey: false,
 		},
